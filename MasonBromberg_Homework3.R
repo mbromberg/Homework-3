@@ -1,9 +1,12 @@
 #Question 1    # #####
 
 #to import the package, go to the console and type "install.packages("coronavirus")
-install.packages("coronavirus")
 
+install.packages("coronavirus")
+install.packages("dplyr")
 library(coronavirus)
+library(dplyr)
+library(plotly)
 head(coronavirus,n=100)
 
 #The first column of the data is simple, its just the date. It is in ascending order, starting on 
@@ -27,8 +30,7 @@ summary_df <- coronavirus %>%
   summarise(total_cases = sum(cases)) %>%
   arrange(-total_cases)
 
-summary_df %>% head(20) #This is copy pasted from the Coronavirus GitHub and I don't see why it wont display the countries in a list
-
+summary_df %>% head(20) 
 
 
 
@@ -43,15 +45,29 @@ summary_df_5 <- coronavirus %>%
   group_by(country) %>%
   summarise(total_cases = sum(cases)) %>%
   arrange(-total_cases)
-summary_df_5 %>% head(5)#this displays the top 5 in a list, yet the top 20 list(same exact code) doesnt work
+summary_df_5 %>% head(5)#this displays the top 5 in a list
 
 
-barplot(summary_df_5)
+library(plotly)
 
-barplot(summary_df_5, names.arg = c("US","Brazil","India","Russia","South Africa"), xlab="Country",ylab="Total Cases",col="blue",main="Total Cases by Country",
-        border = "red")
+conf_df <- coronavirus %>% 
+  filter(type == "confirmed") %>%
+  group_by(country) %>%
+  summarise(total_cases = sum(cases)) %>%
+  arrange(-total_cases) %>%
+  mutate(parents = "Confirmed") %>%
+  ungroup() 
+conf_df %>% head(5)
 
 
+plot(conf_df,
+     "o",
+     xlab = "country names", #This was working for a while on my r stuido until I got ready to submit and then it started giving me an error code even though I didn't change it.
+     ylab = "# total cases", 
+     main = "Top 5 Countries by Total Cases",
+     col = "black")
+
+#Flip the bar graph so it is a horizontal bar plot
 library(plotly)
 
 conf_df <- coronavirus %>% 
@@ -70,16 +86,37 @@ plot_ly(data = conf_df,
         parents=  ~parents,
         domain = list(column=0),
         name = "Confirmed",
-        textinfo="label+value+percent parent")
-
-#Flip the bar graph so it is a horizontal bar plot
-
-
-
+        textinfo="label+value+percent parent",
+        las = 1) #Attempted to get the "las" command to work, couldn't quite get it to flip the graph how I wanted it to.
 
 
 
 #Add a title to the bar graph - "Top 5 countries by total cases"
+
+library(plotly)
+
+conf_df <- coronavirus %>% 
+  filter(type == "confirmed") %>%
+  group_by(country) %>%
+  summarise(total_cases = sum(cases)) %>%
+  arrange(-total_cases) %>%
+  mutate(parents = "Confirmed") %>%
+  ungroup() 
+conf_df %>% head(5)
+
+
+plot(conf_df,
+     "o",
+     xlab = "country names", #This was working for a while on my r stuido until I got ready to submit and then it started giving me an error code even though I didn't change it.
+     ylab = "# total cases", 
+     main = "Top 5 Countries by Total Cases",
+     col = "black") 
+#Again, this was working until I tried to submit and then got an error code, online research
+#tells me that this error code is a glitch in R studio and that my code is actually correct
+#so I truly dont know how to fix it.
+
+
+
 
 
 
@@ -107,8 +144,14 @@ plot(recent_cases,
      ylab = "# confirmed cases", 
      main = "recent_cases line graph",
      col = "dark orange")
-#For this graph I added the orange color and the main title, I also added axis labels, 
-#and I added the line to connect the dots. 
+
+#Extra Credit
+#1. Added Orange Color
+#2. Added Main Title
+#3. Added X Axis Label
+#4. Added Y Axis Label
+#5. Added line connecting the dots
+
 
 
 
